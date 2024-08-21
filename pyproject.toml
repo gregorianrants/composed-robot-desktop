@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "composed-robot-desktop"
+version = "0.1.0"
+description = ""
+authors = ["gregorianrants <gregorian_rants@hotmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.9.2"
+python-dotenv = "^1.0.1"
+matplotlib = "^3.9.0"
+robonet = {git = "https://github.com/gregorianrants/robonet.git"}
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
