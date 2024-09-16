@@ -37,6 +37,41 @@
                 "experiment1-hub",
                 "experiment1-subscriber"
             ]
+        },
+        {
+            "label": "camera-calibration-hub",
+            "type": "shell",
+            "command": "python3 -m hub",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false,
+                "group": "experiment1"
+            }
+        },
+        {
+            "label": "camera-calibration-subscriber",
+            "type": "shell",
+            "command": "python3 -m camera_calibration",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false,
+                "group": "experiment1"
+            }
+        },
+        {
+            "label": "camera-calibration",
+            "dependsOn": [
+                "camera-calibration-hub",
+                "camera-calibration-subscriber"
+            ]
         }
     ]
 }
