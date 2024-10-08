@@ -10,6 +10,7 @@ import cv2
 import numpy as np
 import cv2.aruco as aruco
 import math
+from robonet.Publisher import Publisher
 
 with open('camera_cal.npy','rb') as f:
     camera_matrix = np.load(f)
@@ -17,18 +18,6 @@ with open('camera_cal.npy','rb') as f:
 
 aruco_dict = aruco.getPredefinedDictionary(aruco.DICT_4X4_250)
 marker_size = 100
-
-load_dotenv()
-
-DESKTOP_IP = os.getenv('DESKTOP_IP')
-
-time.sleep(1)
-
-context = zmq.Context()
-subscriber = Subscriber(DESKTOP_IP,context,[{'node':'camera-calibration',
-                                  'topic':'frame'},
-                                  ])
-
 
 def isRotationMatrix(R) :
     Rt = np.transpose(R)
@@ -62,22 +51,29 @@ def rotationMatrixToEulerAngles(R) :
 
 counter = 0
 
-subscriber.start()
+marker_locations = np.array([[0,0,0],[2003.8,0,0],[2003.8,1720.4,0],[0,1720.4,0],[730,2970,0]])
 
-for (topic,node,bytes) in subscriber.bytes_stream():
-    np_array = np.frombuffer(bytes,dtype=np.uint8)
-    image = cv2.imdecode(np_array,1)
-    # np_array = np.frombuffer(frame, dtype=np.uint8).reshape((480,640,3))
-    # print(np_array.shape)
+# marker_locations = {
+#     106: np.array([2003.8,1720.4])
+# }
+
+def get_pose(image):
+    counter = 0
     gray_frame = cv2.cvtColor(image,cv2.COLOR_BGR2GRAY)
     corners,ids,rejected = aruco.detectMarkers(gray_frame,aruco_dict,camera_matrix,camera_distortion)
+    marker_is_found = False
+    results = []
 
     if ids is not None:
+        
         aruco.drawDetectedMarkers(image,corners)
 
         rotation_vectors,translation_vectors,_objPoints = aruco.estimatePoseSingleMarkers(corners,marker_size,camera_matrix,camera_distortion)
 
         for marker in range(len(ids)):
+            marker_location_id = ids[marker][0]
+            if marker_location_id>len(marker_locations)-1:
+                continue
             cv2.drawFrameAxes(image,camera_matrix, camera_distortion, rotation_vectors[marker], translation_vectors[marker],100)
 
             #gives the rotation and translation of the marker in the camera frame
@@ -87,22 +83,30 @@ for (topic,node,bytes) in subscriber.bytes_stream():
             #rotation and translation of the camera in the marker frame
             rotation_vec_camera_in_marker = rotation_vector*-1
             rotation_matrix_c_in_m,jacobian = cv2.Rodrigues(rotation_vec_camera_in_marker)
+
+            pitch,roll,yaw = rotationMatrixToEulerAngles(rotation_matrix_c_in_m)
             
             #we flip the translation vector to get the translation of the camera relative to the marker frame
             #however the vector is still w.r.t. the camera
             translation_vec_camera_in_marker = translation_vector*-1  #w.r.t the camera
             translation_vec_camera_in_marker = np.dot(rotation_matrix_c_in_m,translation_vec_camera_in_marker) #w.r.t the camera
+            tvec_str_in_marker = f"x={translation_vec_camera_in_marker[0]} y={translation_vec_camera_in_marker[1]} direction={math.degrees(yaw)}"
 
-            pitch,roll,yaw = rotationMatrixToEulerAngles(rotation_matrix_c_in_m)
+            
 
-            tvec_str = f"x={translation_vec_camera_in_marker[0]} y={translation_vec_camera_in_marker[1]} direction={math.degrees(yaw)}"
-            if counter ==30:
-                print(tvec_str)
-                counter=0
-            counter+=1
+            
 
-    cv2.imshow('not lost in translation',image)
-    cv2.waitKey(1)
-   
+            translation_vec_camera_in_world = translation_vec_camera_in_marker + marker_locations[marker_location_id]
+
+            tvec_str_in_world = f"x={translation_vec_camera_in_world[0]} y={translation_vec_camera_in_world[1]} direction={math.degrees(yaw)}"
+            print(tvec_str_in_world)
+            # if counter ==30:
+            #     print(tvec_str_in_world)
+            #     counter=0
+            # counter+=1
+
+            results.append([translation_vec_camera_in_world[0],translation_vec_camera_in_world[1],yaw])
+    return (image,results)
+
 
 
