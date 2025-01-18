@@ -3,13 +3,14 @@ name = "composed-robot-desktop"
 version = "0.1.0"
 description = ""
 authors = ["gregorianrants <gregorian_rants@hotmail.com>"]
-readme = "README.md"
+package-mode = false
 
 [tool.poetry.dependencies]
 python = "^3.9.2"
 python-dotenv = "^1.0.1"
 matplotlib = "^3.9.0"
 robonet = {git = "https://github.com/gregorianrants/robonet.git"}
+opencv-contrib-python = "^4.11.0.86"
 
 
 [build-system]
