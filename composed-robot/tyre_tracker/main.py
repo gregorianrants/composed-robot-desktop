@@ -16,7 +16,7 @@ load_dotenv()
 PI_IP = os.getenv("PI_IP")
 
 
-
+print(PI_IP)
 
 context = zmq.Context()
 subscriber = Subscriber(PI_IP, [{'node':'vision',

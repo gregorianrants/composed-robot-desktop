@@ -14,7 +14,7 @@ from robonet.Publisher import Publisher
 from ..aruco_location.aruco_location import Pose
 from ..tyre_tracker.tyre_tracker import track_tyre
 import math
-from sympy import Plane,Line3D
+
 
 with open('camera_cal.npy','rb') as f:
     camera_matrix = np.load(f)
