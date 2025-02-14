@@ -9,7 +9,7 @@ def intersection_plane_and_line(point_on_plane,normal_to_plane,point_on_line,vec
   p = point_on_line
   v = vector_along_line
   t= np.dot((q-p),n)/np.dot(v,n)
-  print(t)
+  #print(t)
   x = p + t*v
   return x
 

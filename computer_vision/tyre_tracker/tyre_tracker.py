@@ -9,6 +9,7 @@ def track_tyre(frame,lower_bound,upper_bound):
         height,width,_ = frame.shape
         centre_pixel = frame_hsv[height//2,width//2]
         # if count%15==0:   
+        #     print('centre pixel hsv values')
         #     print(centre_pixel)
         
         my_mask = cv2.inRange(frame_hsv,lower_bound,upper_bound)
@@ -24,4 +25,5 @@ def track_tyre(frame,lower_bound,upper_bound):
 
         object_of_interest = cv2.bitwise_and(frame,frame,mask=my_mask)
         cv2.imshow('ooi',object_of_interest)
+        count+=1
         return centre

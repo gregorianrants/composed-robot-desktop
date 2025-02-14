@@ -93,6 +93,7 @@ try:
         count+=1
         array = np.frombuffer(bytes,dtype=np.uint8)
         frame = cv2.imdecode(array,1)
+       
         lower_bound = np.array([hueTracker.lower,rangeTracker.lower,valTracker.lower])
         upper_bound = np.array([hueTracker.upper,rangeTracker.upper,valTracker.upper])
 

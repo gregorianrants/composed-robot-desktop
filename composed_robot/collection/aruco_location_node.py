@@ -43,13 +43,25 @@ markers = Markers()
 
 subscriber.start()
 
+count = 0
 
 for (topic,node,bytes) in subscriber.bytes_stream():
     np_array = np.frombuffer(bytes,dtype=np.uint8)
     image = cv2.imdecode(np_array,1)
-    image,results =  markers.get_markers(image)
-    if(len(results)>0):
-        publisher.send_json('aruco-location',{"x":results[0][0], "y": results[0][1], "theta":results[0][2]})
+    image =  markers.get_markers(image)
+    
+    if(markers.markers > 0):
+        marker = markers.marker[0]
+        c_T_m = marker.c_T_m
+        m_T_c = marker.m_T_c
+        pitch,yaw,roll = m_T_c.get_pitch_yaw_roll()
+        x,y,z,_ = m_T_c.homogeneous_matrix @ np.array([0,0,0,1])
+        publisher.send_json('aruco-location',{"x":x, "y": y, "theta":yaw})
+        if count%15==0:
+            print(math.degrees(pitch),math.degrees(yaw),math.degrees(roll))
+            print({'pitch': pitch,'yaw': yaw,'roll': roll})
+        count+=1
+        
     cv2.imshow('not lost in translation',image)
     cv2.waitKey(1)
    

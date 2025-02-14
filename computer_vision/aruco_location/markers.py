@@ -9,11 +9,17 @@ import numpy as np
 import cv2.aruco as aruco
 from robonet.Publisher import Publisher
 from ..utilities.geometry import Pose
+from ..camera_calibration.get_calibration_matrix import get_calibration_matrix
 
     
-with open('camera_calibration_2/camera_cal_3.npy','rb') as f:
-    camera_matrix = np.load(f)
-    camera_distortion = np.load(f)
+
+camera_matrix,camera_distortion = get_calibration_matrix()
+
+f_x = camera_matrix[0,0]
+f_y = camera_matrix[1,1]
+o_x = camera_matrix[0,2]
+o_y = camera_matrix[1,2]
+
 
 aruco_dict = aruco.getPredefinedDictionary(aruco.DICT_4X4_250)
 marker_size = 100
@@ -35,6 +41,7 @@ class Markers:
 
 
     def get_markers(self,image):
+        self.markers = []
         self.image = image
         h,w = image.shape[:2]
         newcameramtx, roi = cv2.getOptimalNewCameraMatrix(camera_matrix, camera_distortion, (w,h), 1, (w,h))
@@ -50,7 +57,7 @@ class Markers:
     
         if ids is not None:
             #added this line without checking effect as i noticed it was missing
-            self.markers = []
+           
             aruco.drawDetectedMarkers(image,corners)
         
 
@@ -60,7 +67,7 @@ class Markers:
                 marker_location_id = ids[marker][0]
                 if marker_location_id>len(self.marker_locations)-1:
                     continue
-                cv2.drawFrameAxes(image,camera_matrix, camera_distortion, rotation_vectors[marker], translation_vectors[marker],marker_size)
+                cv2.drawFrameAxes(image,camera_matrix, 0, rotation_vectors[marker], translation_vectors[marker],marker_size)
                 c_rotation_vector_m = rotation_vectors[marker][0]
                 c_rotation_matrix_m,_ = cv2.Rodrigues(c_rotation_vector_m)
                 c_translation_vector_m = translation_vectors[marker][0]
