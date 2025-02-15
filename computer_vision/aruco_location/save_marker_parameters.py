@@ -89,7 +89,7 @@ for (topic,node,bytes) in subscriber.bytes_stream():
             
             #print(f'x: {x} y: {y} z: {z}')
             #print(f'x: {average[0]} y: {average[1]} z: {average[2]}')
-        if count==50:
+        if count==300:
             break
     if cv2.waitKey(1) == ord("q"):
         break

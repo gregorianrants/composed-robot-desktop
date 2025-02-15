@@ -22,6 +22,25 @@ from ...utilities.geometry import Pose
 from ...camera_calibration.unwarp import unwarp
 
 
+load_dotenv()
+
+PI_IP = os.getenv("PI_IP")
+DESKTOP_IP = os.getenv("DESKTOP_IP")
+
+time.sleep(1)
+
+context = zmq.Context()
+
+publisher = Publisher(
+    hub_ip=PI_IP,
+    address=f"tcp://{DESKTOP_IP}",
+    node="object_locator",
+    topics=["object_position"],
+)
+
+
+
+
 
 camera_matrix,distortion_matrix = get_calibration_matrix()
 
@@ -45,8 +64,10 @@ subscriber.start()
 low = np.array([15,226,239])
 high = np.array([32,255,255])
 
-low = np.array([10,205,221])
-high = np.array([19,255,255])
+low = np.array([10,214,216])
+high = np.array([15,255,255])
+
+
 
 K_inv = np.linalg.inv(camera_matrix)
 
@@ -57,9 +78,9 @@ count = 0
 calibration_matrix = get_calibration_matrix()
 
 
-m_T_c = Pose('m','c',np.array([[ 0.99890097, -0.02732713,  0.0380798 ],
-       [-0.03925281, -0.93300009,  0.35780971],
-       [ 0.02561367, -0.35887594, -0.93303723]]),np.array([ 121.02265276, -460.67071796,  556.57841212]))
+m_T_c = Pose('m','c',np.array([[ 0.97353662,  0.03489696,  0.22585094],
+       [-0.04184987, -0.94433679,  0.32630754],
+       [ 0.22466649, -0.32712417, -0.91788602]]),np.array([-85.72502573, -59.49271161, 523.80470338]))
 c_T_m = m_T_c.get_reverse_pose()
 
 
@@ -67,34 +88,22 @@ for (topic,node,bytes) in subscriber.bytes_stream():
     np_array = np.frombuffer(bytes,dtype=np.uint8)
     image = cv2.imdecode(np_array,1)
     image = unwarp(image,calibration_matrix)
-    
     centre = track_tyre(image,low,high)
-   
+    
     if centre:
-        if(count%15==0):
-            # print('_____________')
-            # print(c_T_m.homogeneous_matrix)
-            # u = centre[0]
-            # v = centre[1]
-            # print(u,v)
-            # print('_______________')
-            u = centre[0]
-            v = centre[1]
-            c_P2_z = get_z(c_T_m)
-            #print('distance_along_z_axis_to_ground: ',c_P2_z)
-            u = centre[0]
-            v = centre[1]
-            m_X = locate_object(u,v,c_P2_z,camera_matrix,c_T_m,m_T_c)
-            
+        u = centre[0]
+        v = centre[1]
+        c_P2_z = get_z(c_T_m)
+        #print('distance_along_z_axis_to_ground: ',c_P2_z)
+        u = centre[0]
+        v = centre[1]
+        x,y,_,_ = locate_object(u,v,c_P2_z,camera_matrix,c_T_m,m_T_c)
         
-            print(m_X)
-            
-            
-            
-            
-            
-            
-            
+        publisher.send_json("object_position",{'x': x, 'y':y})
+   
+   
+        if(count%15==0):
+            print(x,y)
            
         count+=1  
     cv2.imshow('not lost in translation',image)
