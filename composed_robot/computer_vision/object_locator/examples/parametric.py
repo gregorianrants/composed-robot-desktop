@@ -20,6 +20,7 @@ from ..get_z import get_z
 from ..locate_object import locate_object
 from ...utilities.geometry import Pose
 from ...camera_calibration.unwarp import unwarp
+from ...tyre_tracker.load_ranges import load_ranges
 
 
 load_dotenv()
@@ -67,6 +68,8 @@ high = np.array([32,255,255])
 low = np.array([10,214,216])
 high = np.array([15,255,255])
 
+low, high = load_ranges()
+
 
 
 K_inv = np.linalg.inv(camera_matrix)
@@ -106,7 +109,10 @@ for (topic,node,bytes) in subscriber.bytes_stream():
             print(x,y)
            
         count+=1  
-    cv2.imshow('not lost in translation',image)
+    else:
+        publisher.send_json("object_position",{'x': False, 'y':False})
+    
+    #cv2.imshow('not lost in translation',image)
     if cv2.waitKey(1) == ord("q"):
         break
 cv2.destroyAllWindows()

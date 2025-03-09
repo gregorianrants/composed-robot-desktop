@@ -11,7 +11,7 @@ import numpy as np
 import cv2.aruco as aruco
 import math
 from robonet.Publisher import Publisher
-from ..aruco_location import Markers
+from ..computer_vision.aruco_location.markers import Markers
 
 # with open('camera_cal.npy','rb') as f:
 #     camera_matrix = np.load(f)
@@ -50,7 +50,7 @@ for (topic,node,bytes) in subscriber.bytes_stream():
     image = cv2.imdecode(np_array,1)
     image =  markers.get_markers(image)
     
-    if(markers.markers > 0):
+    if(len(markers.markers) > 0):
         marker = markers.marker[0]
         c_T_m = marker.c_T_m
         m_T_c = marker.m_T_c

@@ -2,6 +2,6 @@ venv
 .env
 __pycache__/
 sysvenv
-*.jpg
+
 
 .lgd-nfy0

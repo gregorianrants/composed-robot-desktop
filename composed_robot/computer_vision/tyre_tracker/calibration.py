@@ -9,6 +9,8 @@ import numpy as np
 import io
 import sys
 from .tyre_tracker import track_tyre
+from pathlib import Path
+from .load_ranges import load_ranges
 
 
 load_dotenv()
@@ -27,17 +29,19 @@ subscriber.start()
 best_so_far_for_yellow_lego = ((23,30),(220,255),(220,255))
 
 count = 0
-hue_low = 23
-hue_high = 30
+hue_low = 28
+hue_high = 36
 
-sat_low =220
+sat_low =121
 sat_high = 255
 
-val_low = 220
+val_low = 224
 val_high = 255
 
 lower_bound = np.array([hue_low,sat_low,val_low])
 upper_bound = np.array([hue_high,sat_high,val_high])
+
+lower_bound,upper_bound = load_ranges()
 
 class TrackBar:
     def __init__(self,name,window,start_value,upper_limit):
@@ -73,9 +77,9 @@ class RangeTrackBars:
 
 cv2.namedWindow('myTracker')
 
-hueTracker = RangeTrackBars('Hue','myTracker',low_start=10,high_start=30,upper_limit=179)
-rangeTracker = RangeTrackBars('Sat','myTracker',low_start=100,high_start=255,upper_limit=255)
-valTracker = RangeTrackBars('Val','myTracker',low_start=100,high_start=255,upper_limit=255)
+hueTracker = RangeTrackBars('Hue','myTracker',low_start=lower_bound[0],high_start=upper_bound[0],upper_limit=179)
+rangeTracker = RangeTrackBars('Sat','myTracker',low_start=lower_bound[1],high_start=upper_bound[1],upper_limit=255)
+valTracker = RangeTrackBars('Val','myTracker',low_start=lower_bound[2],high_start=upper_bound[2],upper_limit=255)
 
 # while True:
 #     k = cv2.waitKey(0) & 0xFF
@@ -109,6 +113,11 @@ try:
         cv2.imshow('not lost in translation',frame)
         
         if cv2.waitKey(1)==ord('q'):
+            lower = [hueTracker.lower,rangeTracker.lower,valTracker.lower]
+            upper = [hueTracker.upper,rangeTracker.upper,valTracker.upper]
+            ranges = np.array([[hueTracker.lower,rangeTracker.lower,valTracker.lower],
+                              [hueTracker.upper,rangeTracker.upper,valTracker.upper]])
+            np.save(Path(__file__).parent/'threshold_ranges',ranges)
             break
     cv2.destroyAllWindows()
 except KeyboardInterrupt:

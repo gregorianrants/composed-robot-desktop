@@ -26,7 +26,7 @@ def locate_object(u,v,z,camera_matrix,c_T_d,d_T_c):
     c_P2_x = (c_P2_z/f_x) * (u-o_x)
     c_P2_y = (c_P2_z/f_y) * (v-o_y)
     c_P2 = np.array([c_P2_x,c_P2_y,c_P2_z])
-    m_points_on_m1 = np.array([[0,0,21],[1,0,21],[0,1,21]])
+    m_points_on_m1 = np.array([[0,0,8],[1,0,8],[0,1,8]])
     
     # commented out points lie on the ground plane
     # m_points_on_m1 = np.array([[0,0,0],[1,0,0],[0,1,0]])

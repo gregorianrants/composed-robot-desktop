@@ -1,5 +1,4 @@
 from dotenv import load_dotenv
-
 from robonet.Hub import Hub
 from robonet.Subscriber import Subscriber
 import numpy as np
@@ -44,8 +43,13 @@ class Markers:
         self.markers = []
         self.image = image
         h,w = image.shape[:2]
+        #TODO: think this needs removed, we need to unwarp the image for other applications should prob unwarp outside of this class and pass unwarped image
+        # consider using type checking or you will forget.
+        # probably breaking single responsibility principle here.
         newcameramtx, roi = cv2.getOptimalNewCameraMatrix(camera_matrix, camera_distortion, (w,h), 1, (w,h))
         image = cv2.undistort(image, camera_matrix, camera_distortion, None, newcameramtx)
+        
+        
         x, y, w, h = roi
         image = image[y:y+h, x:x+w]
    

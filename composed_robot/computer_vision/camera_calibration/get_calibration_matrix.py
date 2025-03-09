@@ -1,7 +1,7 @@
 import numpy as np
 
 def get_calibration_matrix():
-    with open('computer_vision/camera_calibration/camera_cal_3.npy','rb') as f:
+    with open('composed_robot/computer_vision/camera_calibration/camera_cal_3.npy','rb') as f:
         camera_matrix = np.load(f)
         camera_distortion = np.load(f)
         
