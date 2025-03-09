@@ -23,6 +23,8 @@ prev_img_shape = None
 
 # Extracting path of individual image stored in a given directory
 images = glob.glob("checked_2/*.jpg")
+#most recent images for camera calibration are now located in one note associated files folder
+
 
 for fname in images:
     img = cv2.imread(fname)
