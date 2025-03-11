@@ -27,5 +27,6 @@ for topic, node, message in subscriber.json_stream():
     #odometry on robot is done in mm but here we do things in cm
     x = message['x']/10
     y = message['y']/10
+    print(x,y)
     theta = message['theta']
     update([x,y],theta)

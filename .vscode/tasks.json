@@ -63,8 +63,8 @@
             "label": "collection",
             "dependsOn": [
                 "location-tracker",
-               
-                "object-locator"
+                //"object-locator",
+                "aruco-location"
             ]
         },
         {
@@ -94,6 +94,11 @@
                 "clear": false,
                 "group": "experiment1"
             }
+        },
+        {
+            "label": "aruco-location-example",
+            "type": "shell",
+            "command": "python3 -m composed_robot.computer_vision.aruco_location.example",
         },
         {
             "label": "experiment1",

@@ -78,6 +78,14 @@ class Pose:
         self.translation_vector = translation_vector # c_tv_m
         self.homogeneous_matrix = self.create_homogeneous_matrix()
         
+    @classmethod
+    def create_from_homogeneous(cls,move_from,move_to,homogeneous_matrix):
+        rotation = homogeneous_matrix[0:3,0:3]
+        translation = homogeneous_matrix[:3,3]
+        return cls(move_from,move_to,rotation,translation)
+        
+        
+        
     def create_homogeneous_matrix(self):
         h_translation = np.eye(4)
         h_translation[:3,3]=self.translation_vector

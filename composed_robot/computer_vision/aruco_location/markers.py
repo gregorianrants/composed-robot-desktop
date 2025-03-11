@@ -19,6 +19,31 @@ f_y = camera_matrix[1,1]
 o_x = camera_matrix[0,2]
 o_y = camera_matrix[1,2]
 
+#makrer locations defined as tile counts + 20mm for end where there is no overlap of tiles
+length_of_tile = 283.4
+offset_for_overlap = 20
+#first marker is positioned at origin
+m0 = np.array([0,0,0])
+#second marker is along x axis
+m1 = np.array([(7*length_of_tile)+offset_for_overlap,0,0])
+#third marker is along y axis from second
+m2 = np.array([(7*length_of_tile)+offset_for_overlap,6*length_of_tile+offset_for_overlap,0])
+#4th marker is along y axis from first marker
+m3 = np.array([0,6*length_of_tile+offset_for_overlap,0])
+#5th tile is offset along x and y axis from first tile
+m4 = np.array([3*length_of_tile+offset_for_overlap,10*length_of_tile+offset_for_overlap,0])
+
+# adjust position due to size of tile. this varied depending on where we have set tape sometimes marker is closer to origin and sometimes 
+#further away
+m0 = m0 + np.array([55,55,0])
+m1 = m1 + np.array([-55,55,0])
+m2 = m2 + np.array([-55,-55,0])
+m3 = m3 + np.array([55,-55,0])
+m4 = m4 + np.array([-55,55,0])
+
+markers = np.array([m0,m1,m2,m3,m4])
+
+
 
 aruco_dict = aruco.getPredefinedDictionary(aruco.DICT_4X4_250)
 marker_size = 100
@@ -36,7 +61,8 @@ class Markers:
     def __init__(self):
         self.image = None
         self.markers = []
-        self.marker_locations = np.array([[0,0,0],[2003.8,0,0],[2003.8,1720.4,0],[0,1720.4,0],[730,2970,0]])
+        # self.marker_locations = np.array([[0,0,0],[2003.8,0,0],[2003.8,1720.4,0],[0,1720.4,0],[2*283.4,2970,0]])
+        self.marker_locations = markers
 
 
     def get_markers(self,image):

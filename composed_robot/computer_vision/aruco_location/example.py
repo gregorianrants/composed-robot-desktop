@@ -13,6 +13,7 @@ import math
 from robonet.Publisher import Publisher
 from .markers import Markers
 from ..camera_calibration.get_calibration_matrix import get_calibration_matrix
+from ...computer_vision.utilities.geometry import Pose
 
 # with open('camera_calibration_2/camera_cal_3.npy','rb') as f:
 #     camera_matrix = np.load(f)
@@ -26,9 +27,6 @@ marker_size = 100
 load_dotenv()
 
 PI_IP = os.getenv("PI_IP")
-
-
-
 
 time.sleep(1)
 
@@ -50,39 +48,44 @@ for (topic,node,bytes) in subscriber.bytes_stream():
     count+=1
     np_array = np.frombuffer(bytes,dtype=np.uint8)
     image = cv2.imdecode(np_array,1)
-    
     image =  markers.get_markers(image)
     
-    h,w = image.shape[:2]
-    newcameramtx, roi = cv2.getOptimalNewCameraMatrix(camera_matrix, camera_distortion, (w,h), 1, (w,h))
-    image = cv2.undistort(image, camera_matrix, camera_distortion, None, newcameramtx)
-    x, y, w, h = roi
-    image = image[y:y+h, x:x+w]
-    
-    
-    cv2.imshow('image',image)
-
-    if len(markers.markers)>0:
+    if(len(markers.markers) > 0):
         marker = markers.markers[0]
         c_T_m = marker.c_T_m
         m_T_c = marker.m_T_c
+        w_T_m = marker.w_T_m
+        
+        w_HM_c = w_T_m.homogeneous_matrix@m_T_c.homogeneous_matrix
+        w_T_c = Pose.create_from_homogeneous('w','c',w_HM_c)
+        
+        #x,y,z,_ =  m_T_c.homogeneous_matrix @ np.array([0,0,0,1])
+        pitch,yaw,roll = w_T_c.get_pitch_yaw_roll()
+        
+        #from vector to go from location of camera in world to centre point between wheels of robot
+        x_camera,y_camera,z,_ =  w_HM_c @ np.array([0,0,0,1])
+        
+        
+        angle = (math.pi/2)+roll
+        magnitude = 188.9552
+        v = np.array([math.cos(angle)*magnitude,math.sin(angle)*magnitude])*-1
+        
+        
+        position_of_camera = np.array([x_camera,y_camera])
+        position_of_robot = position_of_camera+v
+        x_robot,y_robot = position_of_robot
+        
         
         
        
-        if(count%15==0):
-            reading_count+=1
-            pitch,yaw,roll = m_T_c.get_pitch_yaw_roll()
-            print(math.degrees(pitch),math.degrees(yaw),math.degrees(roll))
-            
-            # x,y,z,_ = m_T_c.homogeneous_matrix @ np.array([[0],[0],[0],[1]])
-            x,y,z,_ = m_T_c.homogeneous_matrix @ np.array([0,0,0,1])
-            total = total + np.array([x,y,z])
-            average = total / reading_count
-            
-            #print(f'x: {x} y: {y} z: {z}')
-            #print(f'x: {average[0]} y: {average[1]} z: {average[2]}')
-    if cv2.waitKey(1) == ord("q"):
-        break
+        if count%15==0:
+            # print('roll',math.degrees(roll))
+            # print({'x_camera': x_camera,'y_camera': y_camera,'z': z})
+            print(x_robot,y_robot)
+        count+=1
+        
+    cv2.imshow('not lost in translation',image)
+    cv2.waitKey(1)
 cv2.destroyAllWindows()
 
            
