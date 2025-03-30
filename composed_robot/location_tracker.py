@@ -30,9 +30,10 @@ lc = mc.LineCollection(vertices_to_segments(origin_vertices),colors = [(0.0,0.0,
 fig, ax = plt.subplots()
 ax.add_collection(lc)
 ax.autoscale
-ax.set_xlim(-100,300)
-ax.set_ylim(-200,300)
+ax.set_xlim(-10,210)
+ax.set_ylim(-10,300)
 ax.set_aspect('equal')
+ax.grid(visible=True,which='both')
 
 final_translation = np.array([50,50])
 final_rotation = math.pi

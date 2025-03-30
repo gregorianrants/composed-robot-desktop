@@ -20,7 +20,7 @@
         {
             "label": "aruco-location",
             "type": "shell",
-            "command": "python3 -m composed-robot.collection.aruco_location_node",
+            "command": "python3 -m composed_robot.collection.aruco_location_node",
             "presentation": {
                 "echo": true,
                 "reveal": "always",
@@ -34,7 +34,21 @@
         {
             "label": "location-tracker",
             "type": "shell",
-            "command": "python3 -m composed-robot.collection.location_tracker_node",
+            "command": "python3 -m composed_robot.collection.location_tracker_node",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false,
+                "group": "experiment1"
+            }
+        },
+        {
+            "label": "object-locator",
+            "type": "shell",
+            "command": "python3 -m composed_robot.computer_vision.object_locator.examples.parametric",
             "presentation": {
                 "echo": true,
                 "reveal": "always",
@@ -49,6 +63,7 @@
             "label": "collection",
             "dependsOn": [
                 "location-tracker",
+                //"object-locator",
                 "aruco-location"
             ]
         },
@@ -81,10 +96,16 @@
             }
         },
         {
+            "label": "aruco-location-example",
+            "type": "shell",
+            "command": "python3 -m composed_robot.computer_vision.aruco_location.example",
+        },
+        {
             "label": "experiment1",
             "dependsOn": [
                 "location-tracker-experiment",
-                "aruco-location-experiment"
+                "aruco-location-experiment",
+                
             ]
         },
     ]

@@ -25,6 +25,8 @@ load_dotenv()
 PI_IP = os.getenv("PI_IP")
 DESKTOP_IP = os.getenv("DESKTOP_IP")
 
+
+
 time.sleep(1)
 
 context = zmq.Context()
