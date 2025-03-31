@@ -11,16 +11,16 @@ import numpy as np
 import cv2.aruco as aruco
 import math
 from robonet.Publisher import Publisher
-from ...aruco_location.markers import Markers
-from ...tyre_tracker.tyre_tracker import track_tyre
+from ..computer_vision.aruco_location.markers import Markers
+from ..computer_vision.tyre_tracker.tyre_tracker import track_tyre
 import math
 
-from ...camera_calibration.get_calibration_matrix import get_calibration_matrix
-from ..get_z import get_z
-from ..locate_object import locate_object
-from ...utilities.geometry import Pose
-from ...camera_calibration.unwarp import unwarp
-from ...tyre_tracker.load_ranges import load_ranges
+from ..computer_vision.camera_calibration.get_calibration_matrix import get_calibration_matrix
+from ..computer_vision.object_locator.get_z import get_z
+from ..computer_vision.object_locator.locate_object import locate_object
+from ..computer_vision.utilities.geometry import Pose
+from ..computer_vision.camera_calibration.unwarp import unwarp
+from ..computer_vision.tyre_tracker.load_ranges import load_ranges
 
 
 load_dotenv()
@@ -39,13 +39,7 @@ publisher = Publisher(
     topics=["object_position"],
 )
 
-
-
-
-
 camera_matrix,distortion_matrix = get_calibration_matrix()
-
-
 
 load_dotenv()
 
@@ -70,8 +64,6 @@ high = np.array([15,255,255])
 
 low, high = load_ranges()
 
-
-
 K_inv = np.linalg.inv(camera_matrix)
 
 have_parameters = False
@@ -79,7 +71,6 @@ have_parameters = False
 count = 0
 
 calibration_matrix = get_calibration_matrix()
-
 
 m_T_c = Pose('m','c',np.array([[ 0.97353662,  0.03489696,  0.22585094],
        [-0.04184987, -0.94433679,  0.32630754],

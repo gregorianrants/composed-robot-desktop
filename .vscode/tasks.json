@@ -3,19 +3,16 @@
     // for the documentation about the tasks.json format
     "version": "2.0.0",
     "tasks": [
+        //hub will normally run on the pi this is just here for occasional use and testing
         {
             "label": "hub",
             "type": "shell",
             "command": "python3 -m hub",
-            "presentation": {
-                "echo": true,
-                "reveal": "always",
-                "focus": false,
-                "panel": "shared",
-                "showReuseMessage": true,
-                "clear": false,
-                "group": "experiment1"
-            }
+        },
+        {
+            "label": "calibrate-tyre-tracker",
+            "type": "shell",
+            "command": "python3 -m composed_robot.computer_vision.tyre_tracker.calibration",
         },
         {
             "label": "aruco-location",
@@ -48,7 +45,7 @@
         {
             "label": "object-locator",
             "type": "shell",
-            "command": "python3 -m composed_robot.computer_vision.object_locator.examples.parametric",
+            "command": "python3 -m composed_robot.collection.object_locator_node",
             "presentation": {
                 "echo": true,
                 "reveal": "always",
@@ -67,46 +64,6 @@
                 "aruco-location"
             ]
         },
-        {
-            "label": "aruco-location-experiment",
-            "type": "shell",
-            "command": "python3 -m composed-robot.experiment1.aruco_location_node",
-            "presentation": {
-                "echo": true,
-                "reveal": "always",
-                "focus": false,
-                "panel": "shared",
-                "showReuseMessage": true,
-                "clear": false,
-                "group": "experiment1"
-            }
-        },
-        {
-            "label": "location-tracker-experiment",
-            "type": "shell",
-            "command": "python3 -m composed-robot.experiment1.location_tracker_node",
-            "presentation": {
-                "echo": true,
-                "reveal": "always",
-                "focus": false,
-                "panel": "shared",
-                "showReuseMessage": true,
-                "clear": false,
-                "group": "experiment1"
-            }
-        },
-        {
-            "label": "aruco-location-example",
-            "type": "shell",
-            "command": "python3 -m composed_robot.computer_vision.aruco_location.example",
-        },
-        {
-            "label": "experiment1",
-            "dependsOn": [
-                "location-tracker-experiment",
-                "aruco-location-experiment",
-                
-            ]
-        },
+       
     ]
 }
