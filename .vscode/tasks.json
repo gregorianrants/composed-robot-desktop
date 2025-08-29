@@ -7,17 +7,17 @@
         {
             "label": "hub",
             "type": "shell",
-            "command": "python3 -m hub",
+            "command": "source venv/bin/activate  && python3 -m hub",
         },
         {
             "label": "calibrate-tyre-tracker",
             "type": "shell",
-            "command": "python3 -m composed_robot.computer_vision.tyre_tracker.calibration",
+            "command": "source venv/bin/activate  && python3 -m composed_robot.computer_vision.tyre_tracker.calibration",
         },
         {
             "label": "aruco-location",
             "type": "shell",
-            "command": "python3 -m composed_robot.collection.aruco_location_node",
+            "command": "source venv/bin/activate  && python3 -m composed_robot.collection.aruco_location_node",
             "presentation": {
                 "echo": true,
                 "reveal": "always",
@@ -31,7 +31,7 @@
         {
             "label": "location-tracker",
             "type": "shell",
-            "command": "python3 -m composed_robot.collection.location_tracker_node",
+            "command": "source venv/bin/activate  && python3 -m composed_robot.collection.location_tracker_node",
             "presentation": {
                 "echo": true,
                 "reveal": "always",
@@ -45,7 +45,7 @@
         {
             "label": "object-locator",
             "type": "shell",
-            "command": "python3 -m composed_robot.collection.object_locator_node",
+            "command": "source venv/bin/activate  &&  python3 -m composed_robot.collection.object_locator_node",
             "presentation": {
                 "echo": true,
                 "reveal": "always",

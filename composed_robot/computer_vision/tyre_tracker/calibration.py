@@ -25,7 +25,7 @@ time.sleep(1)
 
 subscriber = Subscriber(PI_IP,[{'node':'vision','topic':'frame'}])
 subscriber.start()
-
+print('hello')
 best_so_far_for_yellow_lego = ((23,30),(220,255),(220,255))
 
 count = 0
